@@ -57,24 +57,20 @@
       <div class="text-center mb-4 text-gray-600">
         <p>เลือกตำแหน่งที่ต้องการลงสมัครได้เลยน้า (ตำแหน่งประธาน/รองประธาน ลงสมัครได้ไม่จำกัด)</p>
       </div>
-      <div id="positionsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        </div>
+      <div id="positionsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
     </div>
 
     <div id="page-summary" class="hidden bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-pink-200">
       <h2 class="text-2xl font-bold text-pink-500 mb-4 text-center">📋 สรุปรายชื่อผู้สมัครทุกตำแหน่ง</h2>
-      <div id="summaryContent" class="space-y-4">
-        </div>
+      <div id="summaryContent" class="space-y-4"></div>
     </div>
 
     <div id="page-vote" class="hidden bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-purple-200 text-center">
       <h2 class="text-2xl font-bold text-purple-500 mb-2">🗳️ ระบบโหวตเลือกตำแหน่ง</h2>
       <p class="text-gray-500 mb-6">เปิดให้ลงคะแนนเฉพาะตำแหน่งที่มีผู้สมัครเกิน (ประธาน / รองประธาน)</p>
-      
       <div class="max-w-md mx-auto bg-purple-50 p-4 rounded-2xl border border-purple-200">
         <h3 class="font-bold text-lg text-purple-600 mb-3">👑 โหวตตำแหน่งประธานพรรค</h3>
-        <div id="voteOptions" class="space-y-2 text-left">
-          </div>
+        <div id="voteOptions" class="space-y-2 text-left"></div>
       </div>
     </div>
 
@@ -132,19 +128,16 @@
         <h3 class="text-xl font-bold text-sky-500" id="viewModalTitle">สมาชิกในตำแหน่ง</h3>
         <button onclick="closeViewModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
       </div>
-      <div id="memberListContent" class="space-y-2 max-h-60 overflow-y-auto pr-1">
-        </div>
+      <div id="memberListContent" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
       <button onclick="closeViewModal()" class="w-full mt-4 bg-sky-400 text-white py-2 rounded-xl font-bold">ปิดหน้าต่าง</button>
     </div>
   </div>
 
   <script>
-    // บัญชี Admin
     const ADMIN_USER = "SAPHA70";
     const ADMIN_PASS = "SASAPHA70";
     let isAdmin = false;
 
-    // ข้อมูลตำแหน่งตามหัวข้อล่าสุด
     const positions = [
       { id: 1, name: 'ประธาน 👑', desc: 'ผู้นำและผู้ประสานงานหลัก', max: null },
       { id: 2, name: 'รองประธาน 1 ⭐', desc: 'ช่วยเหลืองานประธานและดูแลภาพรวม', max: null },
@@ -160,16 +153,19 @@
       { id: 12, name: 'ฝ่ายกิจการ 📄', desc: 'ดูแลเอกสาร', max: 4 }
     ];
 
-    // ข้อมูลสมาชิกที่สมัคร
-    let members = [
+    // โหลดข้อมูลสมาชิกจาก LocalStorage
+    let members = JSON.parse(localStorage.getItem('sapha_members')) || [
       { id: 101, posId: 1, name: 'สมชาย ใจดี', nickname: 'ชาย', classroom: 'ม.5/1' },
-      { id: 102, posId: 1, name: 'สมหญิง รักเรียน', nickname: 'หญิง', classroom: 'ม.5/2' },
-      { id: 103, posId: 5, name: 'กนกวรรณ เงินเยอะ', nickname: 'นก', classroom: 'ม.5/1' }
+      { id: 102, posId: 1, name: 'สมหญิง รักเรียน', nickname: 'หญิง', classroom: 'ม.5/2' }
     ];
 
     let selectedPosId = null;
 
-    // แสดงตำแหน่งทั้งหมด
+    // ฟังก์ชันช่วยบันทึกลง LocalStorage
+    function saveMembersToStorage() {
+      localStorage.setItem('sapha_members', JSON.stringify(members));
+    }
+
     function renderPositions() {
       const grid = document.getElementById('positionsGrid');
       grid.innerHTML = '';
@@ -210,7 +206,6 @@
       });
     }
 
-    // สลับ Tab หน้าจอ
     function switchTab(tab) {
       document.getElementById('page-positions').classList.add('hidden');
       document.getElementById('page-summary').classList.add('hidden');
@@ -235,7 +230,6 @@
       }
     }
 
-    // ระบบล็อกอิน Admin
     function toggleAdminModal() {
       if(!isAdmin) {
         document.getElementById('adminModal').classList.remove('hidden');
@@ -271,7 +265,6 @@
       }
     }
 
-    // ฟังก์ชันอื่นๆ
     function openApplyModal(posId) {
       selectedPosId = posId;
       const pos = positions.find(p => p.id === posId);
@@ -300,6 +293,7 @@
         classroom
       });
 
+      saveMembersToStorage(); // เซฟข้อมูล
       alert('ลงสมัครเรียบร้อยแล้วค่ะ! ✨');
       closeModal();
       renderPositions();
@@ -386,6 +380,7 @@
     function deleteMember(id) {
       if(confirm('ต้องการลบรายชื่อนี้ใช่ไหมคะ?')) {
         members = members.filter(m => m.id !== id);
+        saveMembersToStorage(); // เซฟข้อมูลใหม่หลังจากลบ
         renderPositions();
         renderSummary();
         closeViewModal();
@@ -393,7 +388,6 @@
       }
     }
 
-    // โหลดครั้งแรก
     renderPositions();
   </script>
 </body>

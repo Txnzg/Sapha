@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✨ SAPHA70 - ระบบสมัครตำแหน่งสภานักเรียน ✨</title>
+    <title>✨ SAPHA70 - ระบบสมัคร & เลือกตั้งสภานักเรียน ✨</title>
     <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; font-family: 'Mali', cursive, sans-serif; }
@@ -14,11 +14,11 @@
         .container {
             max-width: 700px; margin: 0 auto; background: rgba(255, 255, 255, 0.95);
             padding: 25px; border-radius: 25px; box-shadow: 0 10px 25px rgba(255, 182, 193, 0.4);
-            border: 3px solid #ffd6e8; position: relative;
+            border: 3px solid #ffd6e8;
         }
-        h1 { text-align: center; color: #ff6b8b; margin-top: 10px; font-size: 26px; }
-
-        .nav-tabs { display: flex; gap: 8px; margin-bottom: 20px; justify-content: center; flex-wrap: wrap; margin-top: 15px; }
+        h1 { text-align: center; color: #ff6b8b; margin-top: 0; font-size: 26px; }
+        
+        .nav-tabs { display: flex; gap: 8px; margin-bottom: 20px; justify-content: center; flex-wrap: wrap; }
         .tab-btn {
             background: #fff; border: 2px solid #b5e2fa; padding: 8px 16px; border-radius: 15px;
             cursor: pointer; font-weight: 600; color: #5fa8d3; transition: 0.3s;
@@ -86,24 +86,19 @@
 </head>
 <body>
 
-<!-- ซ่อนแท็กเสียงไว้ในเบื้องหลัง เพื่อรอสั่งเล่นตอนผู้ใช้คลิกหน้าเว็บ -->
-<audio id="bgMusic" loop>
-    <source src="music.mp3" type="audio/mpeg">
-</audio>
-
 <div class="container">
-    <h1>💥 SAPHA70 - ระบบสมัครตำแหน่งในพรรค 💥</h1>
+    <h1>💥 SAPHA70 - ระบบสมัครพรรค 💥</h1>
 
     <div class="nav-tabs">
         <button class="tab-btn active" onclick="switchTab('apply')">🌸 เลือกตำแหน่ง</button>
         <button class="tab-btn" onclick="switchTab('summary')">📋 สรุปรายชื่อ</button>
         <button class="tab-btn" onclick="switchTab('vote')">🗳️ ระบบโหวต</button>
-        <button class="tab-btn admin-tab" onclick="switchTab('admin')">🔑 สำหรับแอดมิน</button>
+        <button class="tab-btn admin-tab" onclick="switchTab('admin')">🔑 แอดมิน</button>
     </div>
 
     <!-- TAB 1: เลือกตำแหน่ง -->
     <div id="tab-apply" class="tab-content active">
-        <div id="positionsList">กำลังโหลดข้อมูลตำแหน่ง... รอสักครู่น้า⏳</div>
+        <div id="positionsList">กำลังโหลดข้อมูลตำแหน่ง... ⏳</div>
     </div>
 
     <!-- TAB 2: สรุปรายชื่อ -->
@@ -207,22 +202,7 @@
     let allData = [];
     let isAdmin = false;
 
-    // 🎵 สั่งให้เพลงเริ่มเล่นอัตโนมัติทันทีที่มีการคลิกหรือแตะส่วนไหนก็ได้บนหน้าเว็บครั้งแรก
-    function startMusicOnFirstInteraction() {
-        const music = document.getElementById("bgMusic");
-        music.play().then(() => {
-            // เมื่อเล่นเพลงสำเร็จ ลบตัวดักจับออกเพื่อไม่ให้ทำงานซ้ำ
-            document.removeEventListener('click', startMusicOnFirstInteraction);
-            document.removeEventListener('touchstart', startMusicOnFirstInteraction);
-        }).catch(error => {
-            console.log("Waiting for user interaction...");
-        });
-    }
-
-    // ดักจับการแตะ หรือ คลิก ครั้งแรกของผู้ใช้งาน
-    document.addEventListener('click', startMusicOnFirstInteraction, { once: true });
-    document.addEventListener('touchstart', startMusicOnFirstInteraction, { once: true });
-
+    // โครงสร้างตำแหน่งย่อยทั้งหมด
     const positionsConfig = [
         { category: "👑 ฝ่ายบริหารหลัก (สมัครได้ไม่จำกัด)", items: [
             { name: "ประธาน", max: 0 },

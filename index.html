@@ -14,12 +14,24 @@
         .container {
             max-width: 700px; margin: 0 auto; background: rgba(255, 255, 255, 0.95);
             padding: 25px; border-radius: 25px; box-shadow: 0 10px 25px rgba(255, 182, 193, 0.4);
-            border: 3px solid #ffd6e8;
+            border: 3px solid #ffd6e8; position: relative;
         }
-        h1 { text-align: center; color: #ff6b8b; margin-top: 0; font-size: 26px; }
+        h1 { text-align: center; color: #ff6b8b; margin-top: 10px; font-size: 26px; }
         
-        /* Tab Navigation */
-        .nav-tabs { display: flex; gap: 8px; margin-bottom: 20px; justify-content: center; flex-wrap: wrap; }
+        /* Music Player Widget */
+        .music-player {
+            position: absolute; top: 15px; right: 20px;
+            background: #fff0f5; border: 2px solid #ffb3c1; border-radius: 20px;
+            padding: 5px 12px; display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 10px rgba(255, 182, 193, 0.3);
+        }
+        .music-btn {
+            background: #ff85a1; color: white; border: none; border-radius: 50%;
+            width: 30px; height: 30px; cursor: pointer; font-size: 12px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .nav-tabs { display: flex; gap: 8px; margin-bottom: 20px; justify-content: center; flex-wrap: wrap; margin-top: 15px; }
         .tab-btn {
             background: #fff; border: 2px solid #b5e2fa; padding: 8px 16px; border-radius: 15px;
             cursor: pointer; font-weight: 600; color: #5fa8d3; transition: 0.3s;
@@ -31,14 +43,18 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* Position Card */
+        .section-header {
+            background: #ffe5ec; color: #ff4d6d; padding: 8px 15px; border-radius: 12px;
+            font-weight: bold; margin: 15px 0 10px 0; font-size: 16px; border-left: 5px solid #ff6b8b;
+        }
+
         .pos-card {
             background: #f0f8ff; border: 2px dashed #b5e2fa; padding: 15px; border-radius: 20px;
-            margin-bottom: 15px; transition: 0.2s;
+            margin-bottom: 12px; transition: 0.2s;
         }
         .pos-card.pink { background: #fff0f5; border-color: #ffb3c1; }
         .pos-header { display: flex; justify-content: space-between; align-items: center; font-weight: 700; }
-        .pos-title { font-size: 16px; color: #335c67; }
+        .pos-title { font-size: 15px; color: #335c67; }
         .pos-title.pink { color: #d81159; }
         .badge {
             padding: 4px 10px; border-radius: 12px; font-size: 12px; color: white; font-weight: bold;
@@ -56,7 +72,6 @@
             padding: 8px 15px; border-radius: 12px; cursor: pointer; font-weight: bold; margin-top: 8px; margin-left: 5px;
         }
 
-        /* Modal Form */
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.4); justify-content: center; align-items: center; padding: 15px; z-index: 100;
@@ -75,7 +90,6 @@
             border-radius: 15px; font-weight: bold; font-size: 16px; cursor: pointer;
         }
 
-        /* Table Summary */
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
         th, td { border: 1px solid #ffd6e8; padding: 8px; text-align: left; }
         th { background: #ffe5ec; color: #ff4d6d; }
@@ -86,6 +100,15 @@
 <body>
 
 <div class="container">
+    <!-- เครื่องเล่นเพลง MP3 (ดึงไฟล์ music.mp3 จาก GitHub ในโฟลเดอร์เดียวกัน) -->
+    <div class="music-player">
+        <span style="font-size:12px; font-weight:bold; color:#ff6b8b;">🎵 เพลง</span>
+        <button class="music-btn" id="playBtn" onclick="toggleMusic()">▶️</button>
+        <audio id="bgMusic" loop>
+            <source src="music.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
     <h1>💥 SAPHA70 - ระบบสมัครพรรค 💥</h1>
 
     <div class="nav-tabs">
@@ -95,10 +118,12 @@
         <button class="tab-btn admin-tab" onclick="switchTab('admin')">🔑 แอดมิน</button>
     </div>
 
+    <!-- TAB 1: เลือกตำแหน่ง -->
     <div id="tab-apply" class="tab-content active">
         <div id="positionsList">กำลังโหลดข้อมูลตำแหน่ง... ⏳</div>
     </div>
 
+    <!-- TAB 2: สรุปรายชื่อ -->
     <div id="tab-summary" class="tab-content">
         <h3>📋 สรุปรายชื่อผู้สมัครทั้งหมด</h3>
         <div style="overflow-x:auto;">
@@ -118,12 +143,14 @@
         </div>
     </div>
 
+    <!-- TAB 3: ระบบโหวต -->
     <div id="tab-vote" class="tab-content">
         <h3>🗳️ ระบบโหวตประธาน / รองประธาน</h3>
         <p style="color:#666;">สำหรับตำแหน่งที่มีผู้สมัครเกินจำนวน จะทำการเปิดโหวตในส่วนนี้ครับ ✨</p>
         <div id="voteSection">กำลังเตรียมระบบโหวต...</div>
     </div>
 
+    <!-- TAB 4: ระบบแอดมิน -->
     <div id="tab-admin" class="tab-content">
         <div class="admin-box">
             <h3>🔑 ระบบจัดการแอดมิน</h3>
@@ -152,6 +179,7 @@
     </div>
 </div>
 
+<!-- Modal สมัคร -->
 <div class="modal" id="applyModal">
     <div class="modal-content">
         <h3 id="modalTitle">สมัครตำแหน่ง</h3>
@@ -181,6 +209,7 @@
     </div>
 </div>
 
+<!-- Modal ดูรายชื่อ -->
 <div class="modal" id="viewModal">
     <div class="modal-content">
         <h3 id="viewModalTitle">รายชื่อผู้สมัคร</h3>
@@ -190,30 +219,51 @@
 </div>
 
 <script>
-    // ใส่ Web App URL ของคุณเรียบร้อยแล้ว
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUPgQjUfJtXPX4nS4rL1gC9MRSngjvpYhzIsMxB77qgQyZTRXN7diQLEiJtPYYowQy/exec";
     
     let allData = [];
     let isAdmin = false;
 
-    // รายชื่อตำแหน่งและจำนวนที่รับ
+    // ฟังก์ชันเปิด/ปิดเพลง
+    function toggleMusic() {
+        const music = document.getElementById("bgMusic");
+        const btn = document.getElementById("playBtn");
+        if (music.paused) {
+            music.play();
+            btn.innerText = "⏸️";
+        } else {
+            music.pause();
+            btn.innerText = "▶️";
+        }
+    }
+
     const positionsConfig = [
-        { name: "ประธาน", max: 0 },
-        { name: "รองประธาน 1", max: 0 },
-        { name: "รองประธาน 2", max: 0 },
-        { name: "ฝ่ายเลขานุการ (จัดทำเอกสาร สรุปการประชุม)", max: 2 },
-        { name: "เหรัญญิก", max: 1 },
-        { name: "ฝ่ายประชาสัมพันธ์ - ทีมกิจกรรมหน้าเสาธง", max: 3 },
-        { name: "ฝ่ายประชาสัมพันธ์ - ทีมตัดต่อ&คอนเทนต์", max: 2 },
-        { name: "ฝ่ายประชาสัมพันธ์ - ตากล้อง", max: 2 },
-        { name: "ฝ่ายประชาสัมพันธ์ - ทีมโปสเตอร์ลงเพจ", max: 2 },
-        { name: "ฝ่ายนโยบายและวิชาการ - ทีมกลั่นกรองนโยบาย", max: 3 },
-        { name: "ฝ่ายนโยบายและวิชาการ - ทีมประสานงาน", max: 3 },
-        { name: "ฝ่ายกิจกรรม (สันทนาการและกีฬา)", max: 8 },
-        { name: "ฝ่ายสิ่งแวดล้อม", max: 3 },
-        { name: "ฝ่ายประสานงานและจัดการ (กองอำนวยการ/อุปกรณ์)", max: 6 },
-        { name: "ฝ่ายปฏิคม (ประสานงานบุคคลภายนอก)", max: 3 },
-        { name: "ฝ่ายกิจการ (ดูแลเอกสาร)", max: 4 }
+        { category: "👑 ฝ่ายบริหารหลัก (สมัครได้ไม่จำกัด)", items: [
+            { name: "ประธาน", max: 0 },
+            { name: "รองประธาน 1", max: 0 },
+            { name: "รองประธาน 2", max: 0 }
+        ]},
+        { category: "📋 ฝ่ายสนับสนุนและงานทั่วไป", items: [
+            { name: "ฝ่ายเลขานุการ (จัดทำเอกสาร/สรุปการประชุม)", max: 2 },
+            { name: "เหรัญญิก", max: 1 },
+            { name: "ฝ่ายสิ่งแวดล้อม", max: 3 },
+            { name: "ฝ่ายประสานงานและจัดการ (กองอำนวยการ/อุปกรณ์)", max: 6 },
+            { name: "ฝ่ายปฏิคม (ประสานงานบุคคลภายนอก)", max: 3 },
+            { name: "ฝ่ายกิจการ (ดูแลเอกสาร)", max: 4 },
+            { name: "ฝ่ายกิจกรรม (สันทนาการและกีฬา)", max: 8 }
+        ]},
+        { category: "📢 ฝ่ายประชาสัมพันธ์ (9 คน)", items: [
+            { name: "ฝ่ายประชาสัมพันธ์ - หน้าเสาธง (ร้องเพลงชาติ)", max: 1 },
+            { name: "ฝ่ายประชาสัมพันธ์ - หน้าเสาธง (สวดมนต์)", max: 1 },
+            { name: "ฝ่ายประชาสัมพันธ์ - หน้าเสาธง (คำปฏิญาณตน)", max: 1 },
+            { name: "ฝ่ายประชาสัมพันธ์ - ทีมตัดต่อ & คอนเทนต์", max: 2 },
+            { name: "ฝ่ายประชาสัมพันธ์ - ตากล้อง", max: 2 },
+            { name: "ฝ่ายประชาสัมพันธ์ - ทีมโปสเตอร์ลงเพจ", max: 2 }
+        ]},
+        { category: "💡 ฝ่ายนโยบายและวิชาการ (6 คน)", items: [
+            { name: "ฝ่ายนโยบายและวิชาการ - ทีมกลั่นกรองนโยบาย", max: 3 },
+            { name: "ฝ่ายนโยบายและวิชาการ - ทีมประสานงาน", max: 3 }
+        ]}
     ];
 
     window.onload = loadData;
@@ -233,35 +283,42 @@
         const container = document.getElementById("positionsList");
         container.innerHTML = "";
 
-        positionsConfig.forEach(pos => {
-            const currentMembers = allData.filter(d => d.position === pos.name);
-            const count = currentMembers.length;
-            
-            let isFull = pos.max > 0 && count >= pos.max;
-            let badgeHTML = "";
+        positionsConfig.forEach(sec => {
+            const secHeader = document.createElement("div");
+            secHeader.className = "section-header";
+            secHeader.innerText = sec.category;
+            container.appendChild(secHeader);
 
-            if (pos.max === 0) {
-                badgeHTML = `<span class="badge badge-unlimited">สมัครได้ไม่จำกัด (${count} คน)</span>`;
-            } else if (isFull) {
-                badgeHTML = `<span class="badge badge-full">เต็มแล้ว (${count}/${pos.max})</span>`;
-            } else {
-                badgeHTML = `<span class="badge badge-open">ว่างอีก ${pos.max - count} คน (${count}/${pos.max})</span>`;
-            }
+            sec.items.forEach(pos => {
+                const currentMembers = allData.filter(d => d.position === pos.name);
+                const count = currentMembers.length;
+                
+                let isFull = pos.max > 0 && count >= pos.max;
+                let badgeHTML = "";
 
-            const isPink = pos.max === 0;
-            const card = document.createElement("div");
-            card.className = `pos-card ${isPink ? 'pink' : ''}`;
-            card.innerHTML = `
-                <div class="pos-header">
-                    <span class="pos-title ${isPink ? 'pink' : ''}">${pos.name}</span>
-                    ${badgeHTML}
-                </div>
-                <div>
-                    ${!isFull ? `<button class="btn-apply" onclick="openApplyModal('${pos.name}')">เลือกตำแหน่งนี้ 📝</button>` : ''}
-                    <button class="btn-view" onclick="openViewModal('${pos.name}')">ดูรายชื่อ (${count})</button>
-                </div>
-            `;
-            container.appendChild(card);
+                if (pos.max === 0) {
+                    badgeHTML = `<span class="badge badge-unlimited">สมัครได้ไม่จำกัด (${count} คน)</span>`;
+                } else if (isFull) {
+                    badgeHTML = `<span class="badge badge-full">เต็มแล้ว (${count}/${pos.max})</span>`;
+                } else {
+                    badgeHTML = `<span class="badge badge-open">ว่างอีก ${pos.max - count} คน (${count}/${pos.max})</span>`;
+                }
+
+                const isPink = pos.max === 0;
+                const card = document.createElement("div");
+                card.className = `pos-card ${isPink ? 'pink' : ''}`;
+                card.innerHTML = `
+                    <div class="pos-header">
+                        <span class="pos-title ${isPink ? 'pink' : ''}">${pos.name}</span>
+                        ${badgeHTML}
+                    </div>
+                    <div>
+                        ${!isFull ? `<button class="btn-apply" onclick="openApplyModal('${pos.name}')">เลือกตำแหน่งนี้ 📝</button>` : ''}
+                        <button class="btn-view" onclick="openViewModal('${pos.name}')">ดูรายชื่อ (${count})</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
         });
     }
 

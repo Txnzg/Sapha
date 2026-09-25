@@ -1,394 +1,390 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบลงเลือกตำแหน่งพรรค</title>
-  <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { itim: ['Itim', 'cursive'] },
-          colors: {
-            pinkCute: '#FFB6C1',
-            pinkSoft: '#FFD1DC',
-            blueCute: '#AEC6CF',
-            blueSoft: '#E0F7FA',
-            bgCute: '#F8F9FA'
-          }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✨ SAPHA70 - ระบบสมัคร & เลือกตั้งสภานักเรียน ✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; font-family: 'Mali', cursive, sans-serif; }
+        body {
+            background: linear-gradient(135deg, #ffeef8 0%, #e0f4ff 100%);
+            margin: 0; padding: 15px; color: #4a4a4a;
         }
-      }
-    }
-  </script>
-  <style>
-    body { font-family: 'Itim', cursive; }
-  </style>
+        .container {
+            max-width: 700px; margin: 0 auto; background: rgba(255, 255, 255, 0.95);
+            padding: 25px; border-radius: 25px; box-shadow: 0 10px 25px rgba(255, 182, 193, 0.4);
+            border: 3px solid #ffd6e8;
+        }
+        h1 { text-align: center; color: #ff6b8b; margin-top: 0; font-size: 26px; }
+        
+        /* Tab Navigation */
+        .nav-tabs { display: flex; gap: 8px; margin-bottom: 20px; justify-content: center; flex-wrap: wrap; }
+        .tab-btn {
+            background: #fff; border: 2px solid #b5e2fa; padding: 8px 16px; border-radius: 15px;
+            cursor: pointer; font-weight: 600; color: #5fa8d3; transition: 0.3s;
+        }
+        .tab-btn.active { background: #b5e2fa; color: #fff; border-color: #b5e2fa; }
+        .tab-btn.admin-tab { border-color: #ffb3c1; color: #ff6b8b; }
+        .tab-btn.admin-tab.active { background: #ffb3c1; color: #fff; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Position Card */
+        .pos-card {
+            background: #f0f8ff; border: 2px dashed #b5e2fa; padding: 15px; border-radius: 20px;
+            margin-bottom: 15px; transition: 0.2s;
+        }
+        .pos-card.pink { background: #fff0f5; border-color: #ffb3c1; }
+        .pos-header { display: flex; justify-content: space-between; align-items: center; font-weight: 700; }
+        .pos-title { font-size: 16px; color: #335c67; }
+        .pos-title.pink { color: #d81159; }
+        .badge {
+            padding: 4px 10px; border-radius: 12px; font-size: 12px; color: white; font-weight: bold;
+        }
+        .badge-open { background: #a2d2ff; }
+        .badge-full { background: #ff4d6d; }
+        .badge-unlimited { background: #ffb703; }
+
+        .btn-apply {
+            background: linear-gradient(135deg, #ff9a9e, #fecfef); color: white; border: none;
+            padding: 8px 15px; border-radius: 12px; cursor: pointer; font-weight: bold; margin-top: 8px;
+        }
+        .btn-view {
+            background: linear-gradient(135deg, #a1c4fd, #c2e9fb); color: #333; border: none;
+            padding: 8px 15px; border-radius: 12px; cursor: pointer; font-weight: bold; margin-top: 8px; margin-left: 5px;
+        }
+
+        /* Modal Form */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); justify-content: center; align-items: center; padding: 15px; z-index: 100;
+        }
+        .modal-content {
+            background: white; padding: 20px; border-radius: 20px; max-width: 450px; width: 100%;
+            border: 3px solid #ffccd5;
+        }
+        .form-group { margin-bottom: 12px; }
+        label { display: block; font-weight: 600; margin-bottom: 4px; color: #555; }
+        input, select {
+            width: 100%; padding: 10px; border: 2px solid #b5e2fa; border-radius: 12px; outline: none;
+        }
+        .btn-submit {
+            width: 100%; padding: 12px; background: #ff85a1; color: white; border: none;
+            border-radius: 15px; font-weight: bold; font-size: 16px; cursor: pointer;
+        }
+
+        /* Table Summary */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+        th, td { border: 1px solid #ffd6e8; padding: 8px; text-align: left; }
+        th { background: #ffe5ec; color: #ff4d6d; }
+
+        .admin-box { background: #fff5f7; border: 2px dashed #ff85a1; padding: 15px; border-radius: 15px; margin-bottom: 15px; }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-blue-100 via-pink-100 to-sky-100 min-h-screen text-gray-700 pb-12">
+<body>
 
-  <header class="bg-white/80 backdrop-blur-md shadow-md sticky top-0 z-40 p-4 border-b-4 border-pink-300">
-    <div class="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
-      <h1 class="text-2xl sm:text-3xl font-bold text-pink-500 tracking-wide flex items-center gap-2">
-        🌸 ระบบเลือกลงตำแหน่งพรรค ✨
-      </h1>
-      <button onclick="toggleAdminModal()" id="adminBtn" class="bg-sky-400 hover:bg-sky-500 text-white px-4 py-1.5 rounded-full shadow transition-all text-sm">
-        🔑 ล็อกอิน แอดมิน
-      </button>
-    </div>
-  </header>
+<div class="container">
+    <h1>💥 SAPHA70 - ระบบสมัครพรรค 💥</h1>
 
-  <div class="max-w-4xl mx-auto px-4 mt-6">
-
-    <div class="flex justify-center gap-2 sm:gap-4 mb-6">
-      <button onclick="switchTab('positions')" id="tab-positions" class="tab-btn bg-pink-400 text-white px-5 py-2 rounded-2xl font-bold shadow-md hover:scale-105 transition">
-        📌 เลือกตำแหน่ง
-      </button>
-      <button onclick="switchTab('summary')" id="tab-summary" class="tab-btn bg-white text-sky-500 px-5 py-2 rounded-2xl font-bold shadow-md hover:scale-105 transition">
-        📊 สรุปรายชื่อ
-      </button>
-      <button onclick="switchTab('vote')" id="tab-vote" class="tab-btn bg-white text-purple-500 px-5 py-2 rounded-2xl font-bold shadow-md hover:scale-105 transition">
-        🗳️ ระบบโหวต
-      </button>
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('apply')">🌸 เลือกตำแหน่ง</button>
+        <button class="tab-btn" onclick="switchTab('summary')">📋 สรุปรายชื่อ</button>
+        <button class="tab-btn" onclick="switchTab('vote')">🗳️ ระบบโหวต</button>
+        <button class="tab-btn admin-tab" onclick="switchTab('admin')">🔑 แอดมิน</button>
     </div>
 
-    <div id="page-positions" class="space-y-4">
-      <div class="text-center mb-4 text-gray-600">
-        <p>เลือกตำแหน่งที่ต้องการลงสมัครได้เลยน้า (ตำแหน่งประธาน/รองประธาน ลงสมัครได้ไม่จำกัด)</p>
-      </div>
-      <div id="positionsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    <div id="tab-apply" class="tab-content active">
+        <div id="positionsList">กำลังโหลดข้อมูลตำแหน่ง... ⏳</div>
     </div>
 
-    <div id="page-summary" class="hidden bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-pink-200">
-      <h2 class="text-2xl font-bold text-pink-500 mb-4 text-center">📋 สรุปรายชื่อผู้สมัครทุกตำแหน่ง</h2>
-      <div id="summaryContent" class="space-y-4"></div>
-    </div>
-
-    <div id="page-vote" class="hidden bg-white/90 p-6 rounded-3xl shadow-lg border-2 border-purple-200 text-center">
-      <h2 class="text-2xl font-bold text-purple-500 mb-2">🗳️ ระบบโหวตเลือกตำแหน่ง</h2>
-      <p class="text-gray-500 mb-6">เปิดให้ลงคะแนนเฉพาะตำแหน่งที่มีผู้สมัครเกิน (ประธาน / รองประธาน)</p>
-      <div class="max-w-md mx-auto bg-purple-50 p-4 rounded-2xl border border-purple-200">
-        <h3 class="font-bold text-lg text-purple-600 mb-3">👑 โหวตตำแหน่งประธานพรรค</h3>
-        <div id="voteOptions" class="space-y-2 text-left"></div>
-      </div>
-    </div>
-
-  </div>
-
-  <div id="adminModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl border-4 border-sky-200">
-      <h3 class="text-xl font-bold text-sky-500 mb-4 text-center">🔑 ล็อกอินผู้ดูแลระบบ (Admin)</h3>
-      <form onsubmit="handleAdminLogin(event)" class="space-y-3">
-        <div>
-          <label class="text-sm text-gray-600 block mb-1">Username (ชื่อผู้ใช้)</label>
-          <input type="text" id="adminUser" required placeholder="กรอกชื่อผู้ใช้" class="w-full px-4 py-2 rounded-xl border border-sky-200 focus:outline-none focus:ring-2 focus:ring-sky-300">
+    <div id="tab-summary" class="tab-content">
+        <h3>📋 สรุปรายชื่อผู้สมัครทั้งหมด</h3>
+        <div style="overflow-x:auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ตำแหน่ง</th>
+                        <th>ชื่อ-นามสกุล</th>
+                        <th>ชื่อเล่น</th>
+                        <th>ชั้น/ห้อง</th>
+                    </tr>
+                </thead>
+                <tbody id="summaryTableBody">
+                    <tr><td colspan="4" style="text-align:center;">กำลังโหลด...</td></tr>
+                </tbody>
+            </table>
         </div>
-        <div>
-          <label class="text-sm text-gray-600 block mb-1">Password (รหัสผ่าน)</label>
-          <input type="password" id="adminPass" required placeholder="กรอกรหัสผ่าน" class="w-full px-4 py-2 rounded-xl border border-sky-200 focus:outline-none focus:ring-2 focus:ring-sky-300">
-        </div>
-        <div class="flex gap-2 pt-2">
-          <button type="button" onclick="closeAdminModal()" class="w-1/2 bg-gray-200 text-gray-600 py-2 rounded-xl font-bold hover:bg-gray-300">ยกเลิก</button>
-          <button type="submit" class="w-1/2 bg-sky-400 hover:bg-sky-500 text-white py-2 rounded-xl font-bold shadow">เข้าสู่ระบบ</button>
-        </div>
-      </form>
     </div>
-  </div>
 
-  <div id="applyModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border-4 border-pink-200">
-      <h3 class="text-xl font-bold text-pink-500 mb-1" id="modalTitle">กรอกข้อมูลสมัคร</h3>
-      <p class="text-sm text-gray-400 mb-4" id="modalSubTitle">ตำแหน่ง: -</p>
-      
-      <form onsubmit="handleApply(event)" class="space-y-3">
-        <div>
-          <label class="text-sm text-gray-600 block mb-1">ชื่อจริง-นามสกุล</label>
-          <input type="text" id="inputFullName" required placeholder="นายรักเรียน ขยันยิ่ง" class="w-full px-4 py-2 rounded-xl border border-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-300">
-        </div>
-        <div>
-          <label class="text-sm text-gray-600 block mb-1">ชื่อเล่น</label>
-          <input type="text" id="inputNickname" required placeholder="ก้อง" class="w-full px-4 py-2 rounded-xl border border-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-300">
-        </div>
-        <div>
-          <label class="text-sm text-gray-600 block mb-1">ชั้น / ห้อง</label>
-          <input type="text" id="inputClassroom" required placeholder="ม.5/1" class="w-full px-4 py-2 rounded-xl border border-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-300">
-        </div>
-        <div class="flex gap-2 pt-2">
-          <button type="button" onclick="closeModal()" class="w-1/2 bg-gray-200 text-gray-600 py-2 rounded-xl font-bold hover:bg-gray-300">ยกเลิก</button>
-          <button type="submit" class="w-1/2 bg-pink-400 hover:bg-pink-500 text-white py-2 rounded-xl font-bold shadow">ยืนยันสมัคร</button>
-        </div>
-      </form>
+    <div id="tab-vote" class="tab-content">
+        <h3>🗳️ ระบบโหวตประธาน / รองประธาน</h3>
+        <p style="color:#666;">สำหรับตำแหน่งที่มีผู้สมัครเกินจำนวน จะทำการเปิดโหวตในส่วนนี้ครับ ✨</p>
+        <div id="voteSection">กำลังเตรียมระบบโหวต...</div>
     </div>
-  </div>
 
-  <div id="viewMembersModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl border-4 border-sky-200">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-xl font-bold text-sky-500" id="viewModalTitle">สมาชิกในตำแหน่ง</h3>
-        <button onclick="closeViewModal()" class="text-gray-400 hover:text-gray-600 text-2xl font-bold">&times;</button>
-      </div>
-      <div id="memberListContent" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
-      <button onclick="closeViewModal()" class="w-full mt-4 bg-sky-400 text-white py-2 rounded-xl font-bold">ปิดหน้าต่าง</button>
+    <div id="tab-admin" class="tab-content">
+        <div class="admin-box">
+            <h3>🔑 ระบบจัดการแอดมิน</h3>
+            <div id="adminLoginArea">
+                <label>รหัสผ่านแอดมิน:</label>
+                <input type="password" id="adminPassInput" placeholder="กรอกรหัสแอดมิน">
+                <button class="btn-submit" style="margin-top:10px;" onclick="checkAdmin()">เข้าสู่ระบบ</button>
+            </div>
+            <div id="adminPanelArea" style="display:none;">
+                <p style="color:green; font-weight:bold;">ยินดีต้อนรับแอดมิน! คุณสามารถจัดการลบรายชื่อได้จากตารางด้านล่างนี้</p>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ตำแหน่ง</th>
+                                <th>ชื่อ</th>
+                                <th>ชั้น/ห้อง</th>
+                                <th>การจัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
+</div>
 
-  <script>
-    const ADMIN_USER = "SAPHA70";
-    const ADMIN_PASS = "SASAPHA70";
+<div class="modal" id="applyModal">
+    <div class="modal-content">
+        <h3 id="modalTitle">สมัครตำแหน่ง</h3>
+        <form id="modalForm">
+            <input type="hidden" id="modalPosName">
+            <div class="form-group">
+                <label>ชื่อ-นามสกุลจริง:</label>
+                <input type="text" id="inputName" required placeholder="เช่น นายรักเรียน สดใส">
+            </div>
+            <div class="form-group">
+                <label>ชื่อเล่น:</label>
+                <input type="text" id="inputNickname" required placeholder="เช่น กาย">
+            </div>
+            <div class="form-group" style="display:flex; gap:10px;">
+                <div style="flex:1;">
+                    <label>ระดับชั้น ม.:</label>
+                    <input type="text" id="inputGrade" required placeholder="เช่น 6">
+                </div>
+                <div style="flex:1;">
+                    <label>ห้อง:</label>
+                    <input type="text" id="inputRoom" required placeholder="เช่น 1">
+                </div>
+            </div>
+            <button type="submit" class="btn-submit">ยืนยันการสมัคร 💌</button>
+            <button type="button" onclick="closeModal()" style="width:100%; background:#ccc; border:none; padding:8px; border-radius:12px; margin-top:8px; cursor:pointer;">ยกเลิก</button>
+        </form>
+    </div>
+</div>
+
+<div class="modal" id="viewModal">
+    <div class="modal-content">
+        <h3 id="viewModalTitle">รายชื่อผู้สมัคร</h3>
+        <ul id="viewList" style="padding-left: 20px; line-height: 1.8;"></ul>
+        <button type="button" onclick="closeViewModal()" style="width:100%; background:#ff85a1; color:white; border:none; padding:10px; border-radius:12px; cursor:pointer;">ปิดหน้าต่าง</button>
+    </div>
+</div>
+
+<script>
+    // ใส่ Web App URL ของคุณเรียบร้อยแล้ว
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyUPgQjUfJtXPX4nS4rL1gC9MRSngjvpYhzIsMxB77qgQyZTRXN7diQLEiJtPYYowQy/exec";
+    
+    let allData = [];
     let isAdmin = false;
 
-    const positions = [
-      { id: 1, name: 'ประธาน 👑', desc: 'ผู้นำและผู้ประสานงานหลัก', max: null },
-      { id: 2, name: 'รองประธาน 1 ⭐', desc: 'ช่วยเหลืองานประธานและดูแลภาพรวม', max: null },
-      { id: 3, name: 'รองประธาน 2 ⭐', desc: 'ช่วยเหลืองานประธานและดูแลภาพรวม', max: null },
-      { id: 4, name: 'ฝ่ายเลขานุการ 📝', desc: 'จัดทำเอกสาร สรุปการประชุม', max: 2 },
-      { id: 5, name: 'เหรัญญิก 💰', desc: 'ดูแลการเงินและงบประมาณ', max: 1 },
-      { id: 6, name: 'ฝ่ายประชาสัมพันธ์ 📢', desc: 'หน้าเสาธง (3) / ตัดต่อ&คอนเทนต์ (2) / ตากล้อง (2) / โพสต์ลงเพจ (2)', max: 9 },
-      { id: 7, name: 'ฝ่ายนโยบายและวิชาการ 📚', desc: 'กลั่นกรองนโยบาย (3) / ประสานงาน (3)', max: 6 },
-      { id: 8, name: 'ฝ่ายกิจกรรม 🎈', desc: 'สันทนาการและกีฬา เข้าร่วมกิจกรรมต่างๆ', max: 8 },
-      { id: 9, name: 'ฝ่ายสิ่งแวดล้อม 🍃', desc: 'ดูแลสิ่งแวดล้อมและความสะอาด', max: 3 },
-      { id: 10, name: 'ฝ่ายประสานงานและจัดการ 🤝', desc: 'จัดการกองอำนวยการ ดูแลเรื่องอุปกรณ์ สถานที่', max: 6 },
-      { id: 11, name: 'ฝ่ายปฏิคม ☕', desc: 'ดูแลความเรียบร้อย คอยประสานงานกับคนภายนอก', max: 3 },
-      { id: 12, name: 'ฝ่ายกิจการ 📄', desc: 'ดูแลเอกสาร', max: 4 }
+    // รายชื่อตำแหน่งและจำนวนที่รับ
+    const positionsConfig = [
+        { name: "ประธาน", max: 0 },
+        { name: "รองประธาน 1", max: 0 },
+        { name: "รองประธาน 2", max: 0 },
+        { name: "ฝ่ายเลขานุการ (จัดทำเอกสาร สรุปการประชุม)", max: 2 },
+        { name: "เหรัญญิก", max: 1 },
+        { name: "ฝ่ายประชาสัมพันธ์ - ทีมกิจกรรมหน้าเสาธง", max: 3 },
+        { name: "ฝ่ายประชาสัมพันธ์ - ทีมตัดต่อ&คอนเทนต์", max: 2 },
+        { name: "ฝ่ายประชาสัมพันธ์ - ตากล้อง", max: 2 },
+        { name: "ฝ่ายประชาสัมพันธ์ - ทีมโปสเตอร์ลงเพจ", max: 2 },
+        { name: "ฝ่ายนโยบายและวิชาการ - ทีมกลั่นกรองนโยบาย", max: 3 },
+        { name: "ฝ่ายนโยบายและวิชาการ - ทีมประสานงาน", max: 3 },
+        { name: "ฝ่ายกิจกรรม (สันทนาการและกีฬา)", max: 8 },
+        { name: "ฝ่ายสิ่งแวดล้อม", max: 3 },
+        { name: "ฝ่ายประสานงานและจัดการ (กองอำนวยการ/อุปกรณ์)", max: 6 },
+        { name: "ฝ่ายปฏิคม (ประสานงานบุคคลภายนอก)", max: 3 },
+        { name: "ฝ่ายกิจการ (ดูแลเอกสาร)", max: 4 }
     ];
 
-    // โหลดข้อมูลสมาชิกจาก LocalStorage
-    let members = JSON.parse(localStorage.getItem('sapha_members')) || [
-      { id: 101, posId: 1, name: 'สมชาย ใจดี', nickname: 'ชาย', classroom: 'ม.5/1' },
-      { id: 102, posId: 1, name: 'สมหญิง รักเรียน', nickname: 'หญิง', classroom: 'ม.5/2' }
-    ];
+    window.onload = loadData;
 
-    let selectedPosId = null;
-
-    // ฟังก์ชันช่วยบันทึกลง LocalStorage
-    function saveMembersToStorage() {
-      localStorage.setItem('sapha_members', JSON.stringify(members));
+    function loadData() {
+        fetch(SCRIPT_URL)
+            .then(res => res.json())
+            .then(data => {
+                allData = data || [];
+                renderPositions();
+                renderSummary();
+                if(isAdmin) renderAdminTable();
+            });
     }
 
     function renderPositions() {
-      const grid = document.getElementById('positionsGrid');
-      grid.innerHTML = '';
+        const container = document.getElementById("positionsList");
+        container.innerHTML = "";
 
-      positions.forEach(pos => {
-        const currentCount = members.filter(m => m.posId === pos.id).length;
-        const isUnlimited = pos.max === null;
-        const isFull = !isUnlimited && currentCount >= pos.max;
+        positionsConfig.forEach(pos => {
+            const currentMembers = allData.filter(d => d.position === pos.name);
+            const count = currentMembers.length;
+            
+            let isFull = pos.max > 0 && count >= pos.max;
+            let badgeHTML = "";
 
-        const card = document.createElement('div');
-        card.className = "bg-white/90 p-5 rounded-3xl shadow-sm border-2 border-pink-100 hover:shadow-md transition flex flex-col justify-between";
-        card.innerHTML = `
-          <div>
-            <div class="flex justify-between items-start mb-1">
-              <h3 class="font-bold text-lg text-gray-800">${pos.name}</h3>
-              <span class="px-3 py-1 text-xs rounded-full font-bold ${
-                isUnlimited ? 'bg-purple-100 text-purple-600' :
-                isFull ? 'bg-red-100 text-red-500' : 'bg-emerald-100 text-emerald-600'
-              }">
-                ${isUnlimited ? 'รับไม่จำกัด' : (isFull ? 'เต็มแล้ว' : `ว่าง ${pos.max - currentCount} คน`)}
-              </span>
-            </div>
-            <p class="text-xs text-pink-500 font-medium mb-2">${pos.desc}</p>
-            <p class="text-sm text-gray-500 mb-4">สมัครแล้ว: ${currentCount} ${isUnlimited ? 'คน' : `/ ${pos.max} คน`}</p>
-          </div>
-          
-          <div class="flex gap-2">
-            <button onclick="openViewModal(${pos.id})" class="w-1/3 bg-sky-100 text-sky-600 hover:bg-sky-200 py-2 rounded-2xl text-sm font-bold transition">
-              👥 ดูรายชื่อ
-            </button>
-            <button onclick="openApplyModal(${pos.id})" ${isFull ? 'disabled' : ''} 
-              class="w-2/3 ${isFull ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-pink-400 hover:bg-pink-500 text-white'} py-2 rounded-2xl text-sm font-bold shadow transition">
-              ${isFull ? 'เต็มแล้ว' : 'สมัครตำแหน่งนี้'}
-            </button>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
-    }
+            if (pos.max === 0) {
+                badgeHTML = `<span class="badge badge-unlimited">สมัครได้ไม่จำกัด (${count} คน)</span>`;
+            } else if (isFull) {
+                badgeHTML = `<span class="badge badge-full">เต็มแล้ว (${count}/${pos.max})</span>`;
+            } else {
+                badgeHTML = `<span class="badge badge-open">ว่างอีก ${pos.max - count} คน (${count}/${pos.max})</span>`;
+            }
 
-    function switchTab(tab) {
-      document.getElementById('page-positions').classList.add('hidden');
-      document.getElementById('page-summary').classList.add('hidden');
-      document.getElementById('page-vote').classList.add('hidden');
-      
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('bg-pink-400', 'text-white');
-        btn.classList.add('bg-white', 'text-gray-600');
-      });
-
-      if(tab === 'positions') {
-        document.getElementById('page-positions').classList.remove('hidden');
-        document.getElementById('tab-positions').classList.add('bg-pink-400', 'text-white');
-      } else if(tab === 'summary') {
-        document.getElementById('page-summary').classList.remove('hidden');
-        document.getElementById('tab-summary').classList.add('bg-pink-400', 'text-white');
-        renderSummary();
-      } else if(tab === 'vote') {
-        document.getElementById('page-vote').classList.remove('hidden');
-        document.getElementById('tab-vote').classList.add('bg-pink-400', 'text-white');
-        renderVote();
-      }
-    }
-
-    function toggleAdminModal() {
-      if(!isAdmin) {
-        document.getElementById('adminModal').classList.remove('hidden');
-      } else {
-        isAdmin = false;
-        document.getElementById('adminBtn').innerText = '🔑 ล็อกอิน แอดมิน';
-        document.getElementById('adminBtn').className = "bg-sky-400 hover:bg-sky-500 text-white px-4 py-1.5 rounded-full shadow transition-all text-sm";
-        renderPositions();
-        alert('ออกจากระบบ Admin เรียบร้อยแล้วค่ะ');
-      }
-    }
-
-    function closeAdminModal() {
-      document.getElementById('adminModal').classList.add('hidden');
-      document.getElementById('adminUser').value = '';
-      document.getElementById('adminPass').value = '';
-    }
-
-    function handleAdminLogin(e) {
-      e.preventDefault();
-      const user = document.getElementById('adminUser').value.trim();
-      const pass = document.getElementById('adminPass').value.trim();
-
-      if(user === ADMIN_USER && pass === ADMIN_PASS) {
-        isAdmin = true;
-        document.getElementById('adminBtn').innerText = '🔓 โหมด Admin (ออก)';
-        document.getElementById('adminBtn').className = "bg-emerald-400 text-white px-4 py-1.5 rounded-full text-sm font-bold";
-        closeAdminModal();
-        alert('เข้าสู่ระบบ Admin สำเร็จ! คุณสามารถลบรายชื่อสมาชิกที่ลงผิดได้แล้วค่ะ');
-        renderPositions();
-      } else {
-        alert('Username หรือ Password ไม่ถูกต้อง!');
-      }
-    }
-
-    function openApplyModal(posId) {
-      selectedPosId = posId;
-      const pos = positions.find(p => p.id === posId);
-      document.getElementById('modalTitle').innerText = `สมัครตำแหน่ง: ${pos.name}`;
-      document.getElementById('applyModal').classList.remove('hidden');
-    }
-
-    function closeModal() {
-      document.getElementById('applyModal').classList.add('hidden');
-      document.getElementById('inputFullName').value = '';
-      document.getElementById('inputNickname').value = '';
-      document.getElementById('inputClassroom').value = '';
-    }
-
-    function handleApply(e) {
-      e.preventDefault();
-      const name = document.getElementById('inputFullName').value.trim();
-      const nickname = document.getElementById('inputNickname').value.trim();
-      const classroom = document.getElementById('inputClassroom').value.trim();
-
-      members.push({
-        id: Date.now(),
-        posId: selectedPosId,
-        name,
-        nickname,
-        classroom
-      });
-
-      saveMembersToStorage(); // เซฟข้อมูล
-      alert('ลงสมัครเรียบร้อยแล้วค่ะ! ✨');
-      closeModal();
-      renderPositions();
-    }
-
-    function openViewModal(posId) {
-      const pos = positions.find(p => p.id === posId);
-      document.getElementById('viewModalTitle').innerText = `สมาชิก: ${pos.name}`;
-      const listContainer = document.getElementById('memberListContent');
-      
-      const posMembers = members.filter(m => m.posId === posId);
-      listContainer.innerHTML = '';
-
-      if(posMembers.length === 0) {
-        listContainer.innerHTML = '<p class="text-center text-gray-400 py-4">ยังไม่มีผู้สมัครตำแหน่งนี้</p>';
-      } else {
-        posMembers.forEach(m => {
-          const item = document.createElement('div');
-          item.className = "flex justify-between items-center p-3 bg-sky-50 rounded-xl border border-sky-100";
-          item.innerHTML = `
-            <div>
-              <p class="font-bold text-gray-700">${m.name} (${m.nickname})</p>
-              <p class="text-xs text-gray-500">ห้อง: ${m.classroom}</p>
-            </div>
-            ${isAdmin ? `<button onclick="deleteMember(${m.id})" class="text-xs bg-red-400 hover:bg-red-500 text-white px-2 py-1 rounded-lg">ลบ</button>` : ''}
-          `;
-          listContainer.appendChild(item);
+            const isPink = pos.max === 0;
+            const card = document.createElement("div");
+            card.className = `pos-card ${isPink ? 'pink' : ''}`;
+            card.innerHTML = `
+                <div class="pos-header">
+                    <span class="pos-title ${isPink ? 'pink' : ''}">${pos.name}</span>
+                    ${badgeHTML}
+                </div>
+                <div>
+                    ${!isFull ? `<button class="btn-apply" onclick="openApplyModal('${pos.name}')">เลือกตำแหน่งนี้ 📝</button>` : ''}
+                    <button class="btn-view" onclick="openViewModal('${pos.name}')">ดูรายชื่อ (${count})</button>
+                </div>
+            `;
+            container.appendChild(card);
         });
-      }
-
-      document.getElementById('viewMembersModal').classList.remove('hidden');
-    }
-
-    function closeViewModal() {
-      document.getElementById('viewMembersModal').classList.add('hidden');
     }
 
     function renderSummary() {
-      const container = document.getElementById('summaryContent');
-      container.innerHTML = '';
-
-      positions.forEach(pos => {
-        const posMembers = members.filter(m => m.posId === pos.id);
-        const box = document.createElement('div');
-        box.className = "p-4 bg-pink-50/50 rounded-2xl border border-pink-100";
-        
-        let membersHTML = posMembers.length > 0 
-          ? posMembers.map(m => `
-              <li class="flex justify-between items-center text-sm py-1 border-b border-pink-100 last:border-0">
-                <span>• <b>${m.name}</b> (${m.nickname}) - ห้อง ${m.classroom}</span>
-                ${isAdmin ? `<button onclick="deleteMember(${m.id})" class="text-xs bg-red-400 text-white px-2 py-0.5 rounded">ลบ</button>` : ''}
-              </li>
-            `).join('')
-          : '<p class="text-xs text-gray-400 italic">ยังไม่มีผู้สมัคร</p>';
-
-        box.innerHTML = `
-          <h4 class="font-bold text-pink-600 mb-2">${pos.name} (${posMembers.length} คน)</h4>
-          <ul class="space-y-1">${membersHTML}</ul>
-        `;
-        container.appendChild(box);
-      });
+        const tbody = document.getElementById("summaryTableBody");
+        if (allData.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">ยังไม่มีผู้สมัคร</td></tr>`;
+            return;
+        }
+        tbody.innerHTML = "";
+        allData.forEach(item => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td><strong>${item.position}</strong></td>
+                <td>${item.name}</td>
+                <td>${item.nickname}</td>
+                <td>ม.${item.grade}/${item.room}</td>
+            `;
+            tbody.appendChild(tr);
+        });
     }
 
-    function renderVote() {
-      const container = document.getElementById('voteOptions');
-      const presMembers = members.filter(m => m.posId === 1);
-      
-      container.innerHTML = '';
-      if(presMembers.length === 0) {
-        container.innerHTML = '<p class="text-center text-gray-400">ยังไม่มีผู้สมัครตำแหน่งประธาน</p>';
-      } else {
-        presMembers.forEach(m => {
-          const item = document.createElement('div');
-          item.className = "flex justify-between items-center p-3 bg-white rounded-xl border border-purple-100 shadow-sm";
-          item.innerHTML = `
-            <span><b>${m.name}</b> (${m.nickname}) ม.${m.classroom}</span>
-            <button onclick="alert('โหวตสำเร็จแล้วค่ะ!')" class="bg-purple-400 hover:bg-purple-500 text-white px-3 py-1 rounded-xl text-xs font-bold">โหวต 👍</button>
-          `;
-          container.appendChild(item);
+    function openApplyModal(posName) {
+        document.getElementById("modalPosName").value = posName;
+        document.getElementById("modalTitle").innerText = `สมัครตำแหน่ง: ${posName}`;
+        document.getElementById("applyModal").style.display = "flex";
+    }
+
+    function closeModal() {
+        document.getElementById("applyModal").style.display = "none";
+        document.getElementById("modalForm").reset();
+    }
+
+    function openViewModal(posName) {
+        const members = allData.filter(d => d.position === posName);
+        document.getElementById("viewModalTitle").innerText = `รายชื่อผู้สมัคร: ${posName}`;
+        const list = document.getElementById("viewList");
+        list.innerHTML = "";
+        if (members.length === 0) {
+            list.innerHTML = "<li>ยังไม่มีผู้สมัครในตำแหน่งนี้</li>";
+        } else {
+            members.forEach(m => {
+                list.innerHTML += `<li><strong>${m.name} (${m.nickname})</strong> - ม.${m.grade}/${m.room}</li>`;
+            });
+        }
+        document.getElementById("viewModal").style.display = "flex";
+    }
+
+    function closeViewModal() {
+        document.getElementById("viewModal").style.display = "none";
+    }
+
+    document.getElementById("modalForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const payload = {
+            id: Date.now().toString(),
+            position: document.getElementById("modalPosName").value,
+            name: document.getElementById("inputName").value,
+            nickname: document.getElementById("inputNickname").value,
+            grade: document.getElementById("inputGrade").value,
+            room: document.getElementById("inputRoom").value
+        };
+
+        fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(() => {
+            alert("สมัครเรียบร้อยแล้วจ้า! 🎉");
+            closeModal();
+            loadData();
         });
-      }
+    });
+
+    function switchTab(tabName) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+        event.target.classList.add('active');
+        document.getElementById(`tab-${tabName}`).classList.add('active');
+    }
+
+    function checkAdmin() {
+        const pass = document.getElementById("adminPassInput").value;
+        if (pass === "SAPHA70") {
+            isAdmin = true;
+            document.getElementById("adminLoginArea").style.display = "none";
+            document.getElementById("adminPanelArea").style.display = "block";
+            renderAdminTable();
+        } else {
+            alert("รหัสผ่านไม่ถูกต้อง!");
+        }
+    }
+
+    function renderAdminTable() {
+        const tbody = document.getElementById("adminTableBody");
+        tbody.innerHTML = "";
+        allData.forEach(item => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${item.position}</td>
+                <td>${item.name} (${item.nickname})</td>
+                <td>ม.${item.grade}/${item.room}</td>
+                <td><button onclick="deleteMember('${item.id}')" style="background:#ff4d6d; color:white; border:none; padding:4px 8px; border-radius:8px; cursor:pointer;">ลบ ❌</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
     }
 
     function deleteMember(id) {
-      if(confirm('ต้องการลบรายชื่อนี้ใช่ไหมคะ?')) {
-        members = members.filter(m => m.id !== id);
-        saveMembersToStorage(); // เซฟข้อมูลใหม่หลังจากลบ
-        renderPositions();
-        renderSummary();
-        closeViewModal();
-        alert('ลบรายชื่อเรียบร้อยค่ะ');
-      }
+        if(!confirm("แน่ใจเหรอว่าจะลบรายชื่อนี้?")) return;
+        fetch(SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({ action: "delete", id: id, adminPass: "SAPHA70" })
+        })
+        .then(res => res.json())
+        .then(() => {
+            alert("ลบรายชื่อเรียบร้อยแล้ว!");
+            loadData();
+        });
     }
+</script>
 
-    renderPositions();
-  </script>
 </body>
 </html>
